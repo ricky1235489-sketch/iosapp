@@ -24,5 +24,9 @@ targets:
     platform: iOS
     sources:
       - UFOFlowDodgeTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ricky1235489.UFOFlowDodgeTests
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: UFOFlowDodge
