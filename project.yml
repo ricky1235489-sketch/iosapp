@@ -1,0 +1,28 @@
+name: UFOFlowDodge
+options:
+  bundleIdPrefix: com.ricky1235489
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+targets:
+  UFOFlowDodge:
+    type: application
+    platform: iOS
+    sources:
+      - UFOFlowDodge
+    info:
+      path: UFOFlowDodge/App/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ricky1235489.UFOFlowDodge
+        INFOPLIST_FILE: UFOFlowDodge/App/Info.plist
+        TARGETED_DEVICE_FAMILY: "1"
+  UFOFlowDodgeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - UFOFlowDodgeTests
+    dependencies:
+      - target: UFOFlowDodge
