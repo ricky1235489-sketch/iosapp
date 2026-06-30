@@ -75,6 +75,9 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if state == .gameOver {
             resetScene()
+            state = .playing
+            hudLayer.showPlaying()
+            moveUFO(with: touches)
             return
         }
 

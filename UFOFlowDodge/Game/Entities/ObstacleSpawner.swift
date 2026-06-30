@@ -52,11 +52,34 @@ final class ObstacleSpawner {
 
         if Int.random(in: 0...3) == 0 {
             let block = CGSize(width: obstacleWidth, height: CGFloat.random(in: 46...86))
-            let blockHalfWidth = block.width / 2
-            guard sceneWidth >= block.width else { return }
-            let blockX = CGFloat.random(in: blockHalfWidth...(sceneWidth - blockHalfWidth))
-            addObstacle(size: block, position: CGPoint(x: blockX, y: y + 180), color: color.withAlphaComponent(0.85), in: scene)
+            if let blockX = optionalBlockCenterX(sceneWidth: sceneWidth, gapCenterX: centerX, effectiveGap: effectiveGap, blockWidth: block.width) {
+                addObstacle(size: block, position: CGPoint(x: blockX, y: y + 180), color: color.withAlphaComponent(0.85), in: scene)
+            }
         }
+    }
+
+    private func optionalBlockCenterX(sceneWidth: CGFloat, gapCenterX: CGFloat, effectiveGap: CGFloat, blockWidth: CGFloat) -> CGFloat? {
+        let ufoBodyWidth = CGFloat(44)
+        let protectedPathMargin = CGFloat(24)
+        let protectedHalfWidth = max(effectiveGap / 2, ufoBodyWidth / 2 + protectedPathMargin)
+        let protectedMinX = gapCenterX - protectedHalfWidth
+        let protectedMaxX = gapCenterX + protectedHalfWidth
+        let blockHalfWidth = blockWidth / 2
+
+        var ranges: [ClosedRange<CGFloat>] = []
+        let leftUpperBound = protectedMinX - blockHalfWidth
+        if blockHalfWidth <= leftUpperBound {
+            ranges.append(blockHalfWidth...leftUpperBound)
+        }
+
+        let rightLowerBound = protectedMaxX + blockHalfWidth
+        let rightUpperBound = sceneWidth - blockHalfWidth
+        if rightLowerBound <= rightUpperBound {
+            ranges.append(rightLowerBound...rightUpperBound)
+        }
+
+        guard let range = ranges.randomElement() else { return nil }
+        return CGFloat.random(in: range)
     }
 
     private func addObstacle(size: CGSize, position: CGPoint, color: SKColor, in scene: SKScene) {

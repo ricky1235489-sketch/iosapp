@@ -20,6 +20,22 @@ final class ScoreManagerTests: XCTestCase {
         XCTAssertEqual(manager.currentScore, 100)
     }
 
+    func testScoreIsIndependentOfFrameChunking() {
+        let oneUpdate = ScoreManager(userDefaults: makeDefaults())
+        oneUpdate.resetRun()
+        oneUpdate.advance(deltaTime: 1.0, speed: 260)
+
+        let sixtyUpdates = ScoreManager(userDefaults: makeDefaults())
+        sixtyUpdates.resetRun()
+        for _ in 0..<60 {
+            sixtyUpdates.advance(deltaTime: 1.0 / 60.0, speed: 260)
+        }
+
+        XCTAssertEqual(oneUpdate.currentScore, 260)
+        XCTAssertEqual(sixtyUpdates.currentScore, 260)
+        XCTAssertEqual(sixtyUpdates.currentScore, oneUpdate.currentScore)
+    }
+
     func testBestScorePersists() {
         let defaults = makeDefaults()
         let first = ScoreManager(userDefaults: defaults)
