@@ -30,13 +30,20 @@ final class ObstacleSpawner {
     }
 
     private func spawnPair(in scene: SKScene, gap: CGFloat, color: SKColor) {
+        let sceneWidth = scene.size.width
+        let minimumSideWidth = CGFloat(24)
+        let maximumGap = sceneWidth - minimumSideWidth * 2
+        guard maximumGap > 0 else { return }
+
         let obstacleWidth = CGFloat.random(in: 46...82)
-        let minCenterX = min(gap, scene.size.width / 2)
-        let maxCenterX = max(scene.size.width - gap, scene.size.width / 2)
-        let centerX = CGFloat.random(in: minCenterX...maxCenterX)
-        let leftWidth = max(24, centerX - gap / 2)
-        let rightX = centerX + gap / 2
-        let rightWidth = max(24, scene.size.width - rightX)
+        let effectiveGap = min(max(gap, 0), maximumGap)
+        let halfGap = effectiveGap / 2
+        let lowerCenterX = halfGap + minimumSideWidth
+        let upperCenterX = sceneWidth - halfGap - minimumSideWidth
+        let centerX = lowerCenterX <= upperCenterX ? CGFloat.random(in: lowerCenterX...upperCenterX) : sceneWidth / 2
+        let leftWidth = centerX - halfGap
+        let rightX = centerX + halfGap
+        let rightWidth = sceneWidth - rightX
         let height = CGFloat.random(in: 70...150)
         let y = scene.size.height + height
 
@@ -45,8 +52,9 @@ final class ObstacleSpawner {
 
         if Int.random(in: 0...3) == 0 {
             let block = CGSize(width: obstacleWidth, height: CGFloat.random(in: 46...86))
-            let blockInset = min(CGFloat(50), scene.size.width / 2)
-            let blockX = CGFloat.random(in: blockInset...(scene.size.width - blockInset))
+            let blockHalfWidth = block.width / 2
+            guard sceneWidth >= block.width else { return }
+            let blockX = CGFloat.random(in: blockHalfWidth...(sceneWidth - blockHalfWidth))
             addObstacle(size: block, position: CGPoint(x: blockX, y: y + 180), color: color.withAlphaComponent(0.85), in: scene)
         }
     }
