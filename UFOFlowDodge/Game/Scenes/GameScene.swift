@@ -23,9 +23,15 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         ufoController.node.zPosition = 10
         hudLayer.zPosition = 100
 
-        addChild(backgroundLayer)
-        addChild(ufoController.node)
-        addChild(hudLayer)
+        if backgroundLayer.parent == nil {
+            addChild(backgroundLayer)
+        }
+        if ufoController.node.parent == nil {
+            addChild(ufoController.node)
+        }
+        if hudLayer.parent == nil {
+            addChild(hudLayer)
+        }
 
         resetScene()
     }
@@ -64,6 +70,7 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard state == .playing else { return }
         moveUFO(with: touches)
     }
 
