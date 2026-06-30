@@ -36,6 +36,12 @@ final class HUDLayer: SKNode {
     }
 
     func layout(size: CGSize) {
+        let compactWidth = size.width < 380
+        scoreLabel.fontSize = compactWidth ? 30 : 34
+        bestLabel.fontSize = compactWidth ? 13 : 15
+        centerLabel.fontSize = compactWidth ? 29 : 34
+        subtitleLabel.fontSize = compactWidth ? 15 : 17
+
         scoreLabel.position = CGPoint(x: size.width / 2, y: size.height - 76)
         bestLabel.position = CGPoint(x: size.width / 2, y: size.height - 102)
         centerLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.56)

@@ -25,6 +25,15 @@ final class UFOController {
         node.addChild(glow)
         node.addChild(saucer)
         node.addChild(dome)
+
+        let trail = SKShapeNode(ellipseOf: CGSize(width: 28, height: 72))
+        trail.position = CGPoint(x: 0, y: -34)
+        trail.fillColor = SKColor(red: 0.10, green: 0.85, blue: 1.00, alpha: 0.12)
+        trail.strokeColor = .clear
+        trail.glowWidth = 16
+        trail.zPosition = -2
+        node.addChild(trail)
+
         node.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
         node.physicsBody?.isDynamic = true
         node.physicsBody?.affectedByGravity = false
