@@ -50,4 +50,19 @@ final class UFOController {
     func move(to point: CGPoint, within bounds: MovementBounds) {
         node.position = bounds.clamp(point)
     }
+
+    func startIdlePulse() {
+        node.removeAction(forKey: "idlePulse")
+        node.setScale(1.0)
+        let pulse = SKAction.sequence([
+            .scale(to: 1.06, duration: 0.45),
+            .scale(to: 1.0, duration: 0.45)
+        ])
+        node.run(.repeatForever(pulse), withKey: "idlePulse")
+    }
+
+    func stopIdlePulse() {
+        node.removeAction(forKey: "idlePulse")
+        node.run(.scale(to: 1.0, duration: 0.08))
+    }
 }

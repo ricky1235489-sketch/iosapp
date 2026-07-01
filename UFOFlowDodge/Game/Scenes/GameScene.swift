@@ -13,6 +13,7 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
     private let scoreManager = ScoreManager()
     private let zoneManager = ZoneManager()
     private let difficultyCurve = DifficultyCurve()
+    private let hapticsManager = HapticsManager()
 
     private var state: GameState = .ready
     private var movementBounds = MovementBounds(size: .zero, inset: 48)
@@ -75,15 +76,15 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if state == .gameOver {
             resetScene()
-            state = .playing
-            hudLayer.showPlaying()
+            startRun()
+            hapticsManager.playRestart()
             moveUFO(with: touches)
             return
         }
 
         if state == .ready {
-            state = .playing
-            hudLayer.showPlaying()
+            startRun()
+            hapticsManager.playStart()
         }
         moveUFO(with: touches)
     }
@@ -111,7 +112,14 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         ufoController.reset(in: size)
         hudLayer.layout(size: size)
         hudLayer.updateScore(current: scoreManager.currentScore, best: scoreManager.bestScore)
-        hudLayer.showReady()
+        hudLayer.showReady(best: scoreManager.bestScore)
+        ufoController.startIdlePulse()
+    }
+
+    private func startRun() {
+        state = .playing
+        ufoController.stopIdlePulse()
+        hudLayer.showPlaying()
     }
 
     private func moveUFO(with touches: Set<UITouch>) {
@@ -123,12 +131,27 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         state = .gameOver
         scoreManager.finishRun()
         hudLayer.updateScore(current: scoreManager.currentScore, best: scoreManager.bestScore)
-        hudLayer.showGameOver(score: scoreManager.currentScore)
+        hudLayer.showGameOver(score: scoreManager.currentScore, best: scoreManager.bestScore)
+        hapticsManager.playCrash()
+        showCrashFlash()
 
         let flash = SKAction.sequence([
             .fadeAlpha(to: 0.25, duration: 0.04),
             .fadeAlpha(to: 1.0, duration: 0.08)
         ])
         ufoController.node.run(flash)
+    }
+
+    private func showCrashFlash() {
+        let flashNode = SKShapeNode(rectOf: size)
+        flashNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        flashNode.fillColor = .white.withAlphaComponent(0.18)
+        flashNode.strokeColor = .clear
+        flashNode.zPosition = 90
+        addChild(flashNode)
+        flashNode.run(.sequence([
+            .fadeOut(withDuration: 0.16),
+            .removeFromParent()
+        ]))
     }
 }
